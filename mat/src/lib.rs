@@ -77,8 +77,38 @@ pub struct Mat<T> {
     pub data: Vec<T>
 }
 
+pub struct MatIterator<'a, T> {
+    mat: &'a Mat<T>,
+    i: usize,
+    j: usize
+}
+
+impl<T> Mat<T> {
+    pub fn iter<'a>(&'a self) -> MatIterator<'a, T> {
+        MatIterator { mat: self, i: 0, j: 0 }
+    }
+}
+
+impl<'a, T> Iterator for MatIterator<'a, T> {
+    type Item = (usize, usize);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (curr_i, curr_j) = (self.i, self.j);
+
+        if self.j + 1 >= self.mat.cols {
+            self.j = 0;
+            self.i += 1;
+        } else {
+            self.j += 1;
+        }
+
+        if curr_i >= self.mat.rows { None }
+        else { Some((curr_i, curr_j)) }
+    }
+}
+
 #[cfg(test)]
-mod tests {
+mod macro_tests {
     use super::*;
 
     #[test]
@@ -130,5 +160,28 @@ mod tests {
         assert_eq!(m.cols, 1, "Invalid number of cols. Expected {} but got {}.", 3, m.cols);
         assert_eq!(m.data.len(), m.rows * m.cols, "Invalid number of elements. Expected {} but got {}.", m.rows*m.cols, m.data.len());
         for i in 0..3 { assert_eq!(m.data[i], i, "Invalid element in position. Expected {} but got {}.", i, m.data[i]); }
+    }
+}
+
+#[cfg(test)]
+mod iter_test {
+    use super::*;
+
+    #[test]
+    fn iter_for_mat() {
+        let m = mat![
+            0, 1, 2;
+            3, 4, 5;
+        ];
+
+        let iterations_count = m.iter().count();
+        assert_eq!(iterations_count, m.rows*m.cols, "Invalid numer of iterations. Expected {} but got {}.", m.rows*m.cols, iterations_count);
+
+        let expected = vec![(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)];
+        for (idx, (i, j)) in m.iter().enumerate() {
+            let (e_i, e_j) = expected[idx];
+            assert_eq!(i, e_i, "Invalid 'i'. Expected ({}, {}) but got ({}, {}).", e_i, e_j, i, j);
+            assert_eq!(j, e_j, "Invalid 'j'. Expected ({}, {}) but got ({}, {}).", e_i, e_j, i, j);
+        }
     }
 }
