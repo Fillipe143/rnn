@@ -23,13 +23,13 @@ let my_mat = mat![col 1, 2]; // 2x1 matrix
 
 - Iterating an matrix
 ```rs
-    let my_mat = mat![
-        1, 2, 3;
-        4, 5, 6;
-    ];
+let my_mat = mat![
+    1, 2, 3;
+    4, 5, 6;
+];
 
-    for (i, j) in my_mat.iter() {
-        if j == 0 { println!(); }
-        print!("{} ", my_mat.data[i * my_mat.cols + j])
-    }
+for (i, j) in my_mat.iter() {
+    if j == 0 { println!(); }
+    print!("{} ", my_mat.data[i * my_mat.cols + j])
+}
 ```
