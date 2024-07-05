@@ -33,3 +33,17 @@ for (i, j) in my_mat.iter() {
     print!("{} ", my_mat.data[i * my_mat.cols + j])
 }
 ```
+
+- Add matrices
+```rs
+let a = mat![0; 2, 3];
+let b = mat![0; 2, 3];
+let c = a + b;
+```
+
+- Add assign matrices
+```rs
+let mut a = mat![0; 2, 3];
+let b = mat![0; 2, 3];
+a += b;
+```
