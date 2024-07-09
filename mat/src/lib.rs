@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign};
+pub mod ops;
 
 #[macro_export]
 macro_rules! mat {
@@ -95,38 +95,6 @@ impl<T> Mat<T>  {
     }
 }
 
-impl<T> Add<Mat<T>> for Mat<T> 
-where 
-    T: Add<Output = T> + Clone
-{
-    type Output = Mat<T>;
-
-    fn add(self, m: Mat<T>) -> Self::Output {
-        assert_eq!(self.rows, m.rows, "The number of rows in both matrices must be equals. But {} != {}", self.rows, m.rows);
-        assert_eq!(self.cols, m.cols, "The number of cols in both matrices must be equals. But {} != {}", self.cols, m.cols);
-
-        let mut output_mat = Mat::empty(self.rows, self.cols);
-        for i in 0..(self.rows*self.cols) {
-            output_mat.data.push(self.data[i].clone() + m.data[i].clone());
-        }
-
-        output_mat
-    }
-}
-
-impl<T> AddAssign<Mat<T>> for Mat<T>
-where 
-    T: AddAssign<T> + Clone
-{
-    fn add_assign(&mut self, m: Mat<T>) {
-        assert_eq!(self.rows, m.rows, "The number of rows in both matrices must be equals. But {} != {}", self.rows, m.rows);
-        assert_eq!(self.cols, m.cols, "The number of cols in both matrices must be equals. But {} != {}", self.cols, m.cols);
-
-        for i in 0..(self.rows*self.cols) {
-            self.data[i] += m.data[i].clone();
-        }
-    }
-}
 
 impl<'a, T> Iterator for MatIterator<'a, T> {
     type Item = (usize, usize);

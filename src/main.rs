@@ -9,7 +9,6 @@ fn main() {
         4.0, 5.0, 6.0;
     ];
 
-
     println!("{:#?}", m_2x2);
     println!("{:#?}", m_1x2);
     println!("{:#?}", m_2x1);
