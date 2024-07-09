@@ -34,16 +34,11 @@ for (i, j) in my_mat.iter() {
 }
 ```
 
-- Add matrices
+- Matrix operations
 ```rs
 let a = mat![0; 2, 3];
 let b = mat![0; 2, 3];
-let c = a + b;
-```
 
-- Add assign matrices
-```rs
-let mut a = mat![0; 2, 3];
-let b = mat![0; 2, 3];
-a += b;
+let c = a + b; // add;
+let c = a - b; // sub;
 ```
