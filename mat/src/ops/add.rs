@@ -35,6 +35,34 @@ where
     }
 }
 
+impl<T> Add<T> for Mat<T>
+where
+    T: Add<Output = T> + Clone 
+{
+    type Output = Mat<T>;
+
+    fn add(self, scalar: T) -> Self::Output {
+        let mut output_mat = Mat::empty(self.rows, self.cols);
+        for i in 0..(self.rows*self.cols) {
+            output_mat.data.push(self.data[i].clone() + scalar.clone());
+        }
+
+        output_mat
+    }
+}
+
+
+impl<T> AddAssign<T> for Mat<T> 
+where
+    T: AddAssign<T> + Clone
+{
+    fn add_assign(&mut self, scalar: T) {
+        for i in 0..(self.rows*self.cols) {
+            self.data[i] += scalar.clone();
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -90,5 +118,33 @@ mod test {
         let mut a = mat![0; 1, 2];
         let b = mat![0; 1, 1];
         a += b;
+    }
+
+    #[test]
+    fn add_scalar_mat() {
+        let a = mat![
+            -1, 0, 1;
+            2, 3, 4;
+        ];
+
+        let b = a + 1;
+
+        for (idx, (i, j)) in b.iter().enumerate() {
+            assert_eq!(b.data[idx], idx as i32, "Invalid add at {} {}", i, j);
+        }
+    }
+
+    #[test]
+    fn add_assign_scalar_mat() {
+        let mut a = mat![
+            -1, 0, 1;
+            2, 3, 4;
+        ];
+
+        a += 1;
+
+        for (idx, (i, j)) in a.iter().enumerate() {
+            assert_eq!(a.data[idx], idx as i32, "Invalid add at {} {}", i, j);
+        }
     }
 }
