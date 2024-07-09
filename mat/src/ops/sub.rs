@@ -35,6 +35,35 @@ where
     }
 }
 
+impl<T> Sub<T> for Mat<T>
+where
+    T: Sub<Output = T> + Clone 
+{
+    type Output = Mat<T>;
+
+    fn sub(self, scalar: T) -> Self::Output {
+        let mut output_mat = Mat::empty(self.rows, self.cols);
+        for i in 0..(self.rows*self.cols) {
+            output_mat.data.push(self.data[i].clone() - scalar.clone());
+        }
+
+        output_mat
+    }
+}
+
+
+impl<T> SubAssign<T> for Mat<T> 
+where
+    T: SubAssign<T> + Clone
+{
+    fn sub_assign(&mut self, scalar: T) {
+        for i in 0..(self.rows*self.cols) {
+            self.data[i] -= scalar.clone();
+        }
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -89,5 +118,33 @@ mod test {
         let mut a = mat![0; 1, 2];
         let b = mat![0; 1, 1];
         a -= b;
+    }
+
+    #[test]
+    fn sub_scalar_mat() {
+        let a = mat![
+            1, 2, 3;
+            4, 5, 6;
+        ];
+
+        let b = a - 1;
+
+        for (idx, (i, j)) in b.iter().enumerate() {
+            assert_eq!(b.data[idx], idx as i32, "Invalid add at {} {}", i, j);
+        }
+    }
+
+    #[test]
+    fn sub_assign_scalar_mat() {
+        let mut a = mat![
+            1, 2, 3;
+            4, 5, 6;
+        ];
+
+        a -= 1;
+
+        for (idx, (i, j)) in a.iter().enumerate() {
+            assert_eq!(a.data[idx], idx as i32, "Invalid add at {} {}", i, j);
+        }
     }
 }
