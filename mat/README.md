@@ -35,7 +35,7 @@ for (i, j) in my_mat.iter() {
 ```
 
 - Get value of matrix
-```
+```rs
 let my_mat = mat![
     1, 2, 3;
     4, 5, 6;
