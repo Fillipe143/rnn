@@ -1,4 +1,4 @@
-use std::ops::{AddAssign, Mul};
+use std::ops::{AddAssign, Mul, MulAssign};
 
 use crate::Mat;
 
@@ -22,6 +22,33 @@ where
         }
 
         output_mat
+    }
+}
+
+impl<T> Mul<T> for Mat<T>
+where
+    T: Mul<Output = T> + Clone
+{
+    type Output = Mat<T>;
+
+    fn mul(self, scalar: T) -> Self::Output {
+        let mut output_mat = Mat::empty(self.rows, self.cols);
+        for i in 0..(self.rows*self.cols) {
+            output_mat.data.push(self.data[i].clone() * scalar.clone());
+        }
+
+        output_mat
+    }
+}
+
+impl<T> MulAssign<T> for Mat<T>
+where
+    T: MulAssign<T> + Clone
+{
+    fn mul_assign(&mut self, scalar: T) {
+        for i in 0..(self.rows*self.cols) {
+            self.data[i] *= scalar.clone();
+        }
     }
 }
 
@@ -63,5 +90,35 @@ mod test {
         let a = mat![0; 1, 2];
         let b = mat![0; 1, 1];
         let _ = a * b;
+    }
+
+    #[test]
+    fn mul_scalar_mat() {
+        let a = mat![
+            0, 1, 2;
+            3, 4, 5;
+        ];
+
+        let b = a * 2;
+
+        for (idx, (i, j)) in b.iter().enumerate() {
+            let output = idx * 2;
+            assert_eq!(b.data[idx], output, "Invalid mul at {} {}", i, j);
+        }
+    }
+
+    #[test]
+    fn mul_assign_scalar_mat() {
+        let mut a = mat![
+            0, 1, 2;
+            3, 4, 5;
+        ];
+
+        a *= 2;
+
+        for (idx, (i, j)) in a.iter().enumerate() {
+            let output = idx * 2;
+            assert_eq!(a.data[idx], output, "Invalid mul at {} {}", i, j);
+        }
     }
 }
