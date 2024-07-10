@@ -34,6 +34,17 @@ for (i, j) in my_mat.iter() {
 }
 ```
 
+- Get value of matrix
+```
+let my_mat = mat![
+    1, 2, 3;
+    4, 5, 6;
+];
+
+let (i, j) = (0, 0);
+println!("{}", my_mat[(i, j)]);
+```
+
 - Matrix operations
 ```rs
 let a = mat![0; 2, 3];
