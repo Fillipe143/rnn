@@ -30,7 +30,7 @@ let my_mat = mat![
 
 for (i, j) in my_mat.iter() {
     if j == 0 { println!(); }
-    print!("{} ", my_mat.data[i * my_mat.cols + j])
+    print!("{} ", my_mat[(i, j)])
 }
 ```
 
@@ -61,4 +61,16 @@ let b = mat![0; 3, 2];
 
 let c = a * b; // mul mat (does not accept *=)
 let c = a * 2; // mul mat with scalar (also accept *=)
+```
+
+- Matrix transformations 
+```rs
+let mut m = mat![
+    1, 2, 3;
+    4, 5, 6;
+];
+
+let new_m = m.transform(|v| (v as f32) / 2.0) // creates a new mat by applying the function to all elements (also supports changing types)
+
+m.transform_assign(|v| v * 2); // modifies the mat by applying the function to all elements (does not support changing types)
 ```
