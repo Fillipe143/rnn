@@ -5,71 +5,58 @@ pub mod ops;
 #[macro_export]
 macro_rules! mat {
     ($value:expr;$rows:expr,$cols:expr) => {
-        Mat {
-            rows: $rows,
-            cols: $cols,
-            data: vec![$value; ($rows) * ($cols)]
-        }
+        Mat::new($rows, $cols, vec![$value; ($rows) * ($cols)])
     };
 
     ($($($value:expr),+);+;) => {
         {
-            let mut tmp_mat = Mat {
-                rows: 0,
-                cols: 0,
-                data: Vec::new()
-            };
+            let mut data = Vec::new();
+            let (mut rows, mut cols) = (0, 0);
 
             $(
-                let mut cols = 0;
-                tmp_mat.rows += 1;
+                let mut tmp_cols = 0;
+                rows += 1;
                 $(
-                    cols += 1;
-                    tmp_mat.data.push($value);
+                    tmp_cols += 1;
+                    data.push($value);
                 )+
 
-                if tmp_mat.cols == 0 {
-                    tmp_mat.cols = cols;
+                if cols == 0 {
+                    cols = tmp_cols;
                 } else {
-                    assert!(tmp_mat.cols == cols, "Number of element in each row must be equal.");
+                    assert!(cols == tmp_cols, "Number of element in each row must be equal.");
                 }
             )+
 
-            tmp_mat
+            Mat::new(rows, cols, data)
         }
     };
 
     (row$($value:expr),+) => {
         {
-            let mut tmp_mat = Mat {
-                rows: 1,
-                cols: 0,
-                data: Vec::new()
-            };
+            let mut data = Vec::new();
+            let mut cols = 0;
 
             $(
-                tmp_mat.cols += 1;
-                tmp_mat.data.push($value);
+                cols += 1;
+                data.push($value);
             )+
 
-            tmp_mat
+            Mat::new(1, cols, data)
         }
     };
 
     (col$($value:expr),+) => {
         {
-            let mut tmp_mat = Mat {
-                rows: 0,
-                cols: 1,
-                data: Vec::new()
-            };
+            let mut data = Vec::new();
+            let mut rows = 0;
 
             $(
-                tmp_mat.rows += 1;
-                tmp_mat.data.push($value);
+                rows += 1;
+                data.push($value);
             )+
 
-            tmp_mat
+            Mat::new(rows, 1, data)
         }
     };
 }
@@ -78,7 +65,7 @@ macro_rules! mat {
 pub struct Mat<T> {
     pub rows: usize,
     pub cols: usize,
-    pub data: Vec<T>
+    data: Vec<T>
 }
 
 pub struct MatIterator<'a, T> {
@@ -88,6 +75,11 @@ pub struct MatIterator<'a, T> {
 }
 
 impl<T> Mat<T>  {
+    pub fn new(rows: usize, cols: usize, data: Vec<T>) -> Mat<T> {
+        assert_eq!(data.len(), rows*cols, "Invalid size of vec. Expected {} but got {}", rows*cols, data.len());
+        Mat { rows, cols, data }
+    }
+
     pub fn empty(rows: usize, cols: usize) -> Mat<T> {
         Mat { rows, cols, data: Vec::<T>::new() }
     }
